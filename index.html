@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ako Amrallahi — Links</title>
+  <meta name="description" content="Ako Amrallahi — Architect. Portfolio, social links, CV and contact." />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#faf9f7;
+      --card:#ffffff;
+      --muted:#6b6b6b;
+      --accent:#0b3d91; /* deep blue */
+      --accent-2:#1f7a6c; /* teal */
+      --radius:18px;
+      --maxw:720px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background:linear-gradient(180deg,rgba(11,61,145,0.02),rgba(31,122,108,0.01));
+      color:#111;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;align-items:center;justify-content:center;padding:40px;
+    }
+
+    .card{
+      width:100%;max-width:var(--maxw);background:var(--card);border-radius:var(--radius);box-shadow:0 18px 40px rgba(12,20,30,0.06);padding:42px;
+    }
+
+    header{display:flex;gap:18px;align-items:center}
+    .avatar{width:84px;height:84px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-family:Playfair Display,serif;font-size:28px}
+
+    h1{font-family:Playfair Display,serif;margin:0;font-size:28px}
+    p.lead{margin:6px 0 0;color:var(--muted);font-size:14px}
+
+    .about{margin-top:20px;line-height:1.45;color:#222}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+
+    .block{background:linear-gradient(180deg,#fff,#fbfbfb);padding:14px;border-radius:12px;border:1px solid rgba(15,20,30,0.03)}
+    .contact-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+    .contact-list a{color:var(--accent);text-decoration:none;font-weight:600}
+    .contact-meta{color:var(--muted);font-size:13px}
+
+    .links{display:flex;flex-direction:column;gap:10px}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;text-decoration:none;font-weight:600;background:linear-gradient(90deg,rgba(11,61,145,0.06),rgba(31,122,108,0.03));border:1px solid rgba(11,61,145,0.06);color:var(--accent);}
+    .btn svg{width:18px;height:18px;opacity:0.9}
+
+    .projects{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+    .small{font-size:13px;color:var(--muted)}
+
+    footer{margin-top:22px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+
+    @media (max-width:640px){
+      .grid{grid-template-columns:1fr}
+      .avatar{width:64px;height:64px;font-size:22px;border-radius:10px}
+      h1{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <header>
+      <div class="avatar">AA</div>
+      <div>
+        <h1>Ako Amrallahi</h1>
+        <p class="lead">MArch candidate — cultural & residential design • tectonics & social space</p>
+      </div>
+    </header>
+
+    <section class="about">
+      <p>Architect focused on public and residential architecture. I work across concept, technical drawings and digital fabrication. My work explores materiality and social program to shape adaptable public spaces.</p>
+    </section>
+
+    <div class="grid">
+      <div class="block">
+        <h3 style="margin:0 0 8px 0">Contact</h3>
+        <ul class="contact-list">
+          <li><a href="mailto:youremail@example.com">youremail@example.com</a></li>
+          <li class="contact-meta">Phone: +39 123 456 7890</li>
+          <li class="contact-meta">Address: Rome, Italy</li>
+        </ul>
+
+        <div style="margin-top:12px">
+          <a class="btn" href="/path-to-your-cv.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v12" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 11l4 4 4-4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 21H3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>Download CV</a>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3 style="margin:0 0 8px 0">Quick Links</h3>
+        <div class="links">
+          <a class="btn" href="https://www.linkedin.com/in/your-linkedin" target="_blank" rel="noopener"> <!-- LinkedIn -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-14h4v2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><rect x="2" y="9" width="4" height="12" rx="1" stroke-width="1.6"></rect></svg>
+            LinkedIn
+          </a>
+
+          <a class="btn" href="https://www.instagram.com/your-instagram" target="_blank" rel="noopener"> <!-- Instagram -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="5" stroke-width="1.6"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8" stroke-width="1.6"></path><path d="M17.5 6.5h.01" stroke-width="2" stroke-linecap="round"></path></svg>
+            Instagram
+          </a>
+
+          <a class="btn" href="https://www.behance.net/your-behance" target="_blank" rel="noopener"> <!-- Behance -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h4a3 3 0 0 0 0-6H5v6zM4 18h5a3 3 0 0 0 0-6H4v6zM20 9h-3v9h3" stroke-width="1.6"></path></svg>
+            Behance
+          </a>
+
+          <a class="btn" href="https://your-portfolio-site.example.com" target="_blank" rel="noopener"> <!-- Portfolio site -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12h18M3 6h18M3 18h18" stroke-width="1.6"></path></svg>
+            Full Portfolio
+          </a>
+
+          <a class="btn" href="/certificates/index.html" target="_blank"> <!-- Certificates page or PDF -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 5 2-7L2 9h7z" stroke-width="1.4"></path></svg>
+            Certificates
+          </a>
+
+          <a class="btn" href="/projects/index.html" target="_blank">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7h18M3 12h18M3 17h18" stroke-width="1.6"></path></svg>
+            Selected Projects
+          </a>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="projects">
+      <div class="block small">
+        <strong>Featured</strong> — Cultural Centre (MArch) • Residential Complex (MArch) • Best Bachelor Project
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+        <a class="btn" href="https://issuu.com/your-portfolio" target="_blank">View condensed PDF</a>
+        <a class="btn" href="mailto:youremail@example.com?subject=Portfolio%20Inquiry">Request full dossier</a>
+      </div>
+    </div>
+
+    <footer>
+      <div>© <span id="year"></span> Ako Amrallahi</div>
+      <div class="small">Built with ❤️ — Minimal Links</div>
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
