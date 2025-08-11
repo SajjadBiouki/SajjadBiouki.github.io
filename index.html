@@ -1,238 +1,424 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <!--
+    Architectural Link Hub — Light Theme
+    - Self-contained HTML file
+    - Glassmorphic / glossy buttons
+    - Blueprint-style subtle background embedded as Base64 SVG (no external images required)
+    - Lato (body) + Cinzel (headings) from Google Fonts
+    - Accessible: reduced-motion support, aria labels on interactive elements
+    - JS: IntersectionObserver for fade-up animations + copy phone number helper
+
+    Edit notes:
+      * Replace avatar src, CV and portfolio hrefs, and social links.
+      * Adjust color palette using the --accent / --accent-2 / --muted variables.
+  -->
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Sajjad Biouki — Links</title>
   <meta name="description" content="Sajjad Biouki — Architect. Portfolio, social links, CV and contact." />
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <!-- Modern, readable fonts (swap to other fonts if you prefer) -->
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;600&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
+    /******************************************************************
+     *  :root variables — change these to tweak the palette & sizes
+     ******************************************************************/
     :root{
-      --bg:#faf9f7;
-      --card:#ffffff;
-      --muted:#6b6b6b;
-      --accent:#0b3d91;
-      --accent-2:#1f7a6c;
+      --bg-1: #fbfbfa;
+      --bg-2: #f2f3f4;
+      --card: #ffffff;
+      --muted:#6e6e6e;
+      --accent:#0b3d91;       /* deep blue */
+      --accent-2:#1f7a6c;     /* teal */
+      --bronze:#99714b;       /* optional secondary warm accent */
+      --glass-alpha: 0.14;
       --radius:18px;
-      --maxw:720px;
+      --maxw:820px;
+      --gutter:44px;
+      --text: #111;
+      --shadow: 0 18px 40px rgba(12,20,30,0.06);
     }
-    *{box-sizing:border-box}
+
+    /* Base reset and sensible defaults */
+    *,*::before,*::after { box-sizing: border-box; }
     html,body{height:100%}
     body{
       margin:0;
-      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
-      background:linear-gradient(180deg,rgba(11,61,145,0.02),rgba(31,122,108,0.01));
-      color:#111;
+      font-family: 'Lato', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:var(--text);
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
+      min-height:100vh;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:40px;
-      min-height:100vh;
+      padding:48px 20px;
+      background: linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      /* subtle blueprint grid using inline SVG (base64) */
+      background-image:
+        url("data:image/svg+xml;utf8,<?xml version='1.0' encoding='utf-8'?>\
+        <svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'>\
+          <defs>\
+            <pattern id='g' width='40' height='40' patternUnits='userSpaceOnUse'>\
+              <rect width='40' height='40' fill='%23fafafa' />\
+              <path d='M0 0 L40 0' stroke='%23e9e9e9' stroke-width='0.8'/>\
+              <path d='M0 10 L40 10' stroke='%23f2f2f2' stroke-width='0.6'/>\
+              <path d='M0 20 L40 20' stroke='%23fafafa' stroke-width='0.4'/>\
+              <path d='M0 30 L40 30' stroke='%23f2f2f2' stroke-width='0.6'/>\
+              <path d='M10 0 L10 40' stroke='%23e9e9e9' stroke-width='0.8'/>\
+            </pattern>\
+          </defs>\
+          <rect width='100%' height='100%' fill='url(%23g)' opacity='0.45'/>\
+        </svg>");
+      background-blend-mode: overlay;
+      background-size: auto;
     }
 
+    /* The central card that contains everything */
     .card{
-      width:100%;max-width:var(--maxw);background:var(--card);border-radius:var(--radius);box-shadow:0 18px 40px rgba(12,20,30,0.06);padding:42px;
+      width:100%;
+      max-width:var(--maxw);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.98));
+      border-radius:calc(var(--radius) + 2px);
+      padding:calc(var(--gutter) - 10px);
+      box-shadow:var(--shadow);
+      border: 1px solid rgba(10,10,10,0.02);
+      overflow:hidden;
     }
-    header{display:flex;gap:18px;align-items:center}
-    .avatar{width:84px;height:84px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-family:Playfair Display,serif;font-size:28px}
-    h1{font-family:Playfair Display,serif;margin:0;font-size:28px}
-    p.lead{margin:6px 0 0;color:var(--muted);font-size:14px}
-    .about{margin-top:20px;line-height:1.45;color:#222}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
-    .block{background:linear-gradient(180deg,#fff,#fbfbfb);padding:14px;border-radius:12px;border:1px solid rgba(15,20,30,0.03)}
-    .contact-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
-    .contact-list a{color:var(--accent);text-decoration:none;font-weight:600}
-    .contact-meta{color:var(--muted);font-size:13px}
-    .links{display:flex;flex-direction:column;gap:10px}
+
+    /* Header layout — centered top */
+    header{
+      display:flex;
+      align-items:center;
+      gap:22px;
+      justify-content:center;
+      text-align:left;
+      margin-bottom:18px;
+    }
+
+    /* Avatar container — circular / soft rectangle */
+    .avatar{
+      width:110px;
+      height:110px;
+      border-radius:14px;
+      overflow:hidden;
+      flex-shrink:0;
+      box-shadow: 0 8px 20px rgba(10,20,30,0.06);
+      border: 1px solid rgba(10,10,10,0.03);
+      background: linear-gradient(135deg, rgba(11,61,145,0.12), rgba(31,122,108,0.08));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* Name & subtitle */
+    h1{ margin:0; font-family: 'Cinzel', serif; font-size:30px; line-height:1; letter-spacing:0.6px; }
+    p.lead{ margin:6px 0 0; color:var(--muted); font-size:14px; max-width:540px; }
+
+    /* Main layout grid:
+       left column: contact / CV
+       right column: quick links / socials
+       On small screens it stacks vertically.
+    */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:22px;
+      margin-top:26px;
+      align-items:start;
+    }
+
+    /* Soft module card style used in each block */
+    .block{
+      background: linear-gradient(180deg, rgba(255,255,255,0.80), rgba(250,250,250,0.95));
+      padding:18px;
+      border-radius:12px;
+      border: 1px solid rgba(10,10,10,0.03);
+      box-shadow: 0 10px 28px rgba(12,20,30,0.04);
+      transition: transform .35s ease, box-shadow .35s ease;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    /* class 'show' is toggled by JS intersection observer to animate into view */
+    .block.show { opacity:1; transform: translateY(0); }
+
+    /* Contact list */
+    .contact-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+    .contact-list a { color:var(--accent); text-decoration:none; font-weight:600; }
+    .contact-meta{ color:var(--muted); font-size:13px; }
+
+    /* Glassmorphic glossy buttons — large clickable areas */
+    .links{ display:flex; flex-direction:column; gap:12px; }
     .btn{
       display:inline-flex;
       align-items:center;
-      gap:10px;
-      padding:12px 14px;
-      border-radius:10px;
+      gap:12px;
+      padding:12px 16px;
+      border-radius:12px;
       text-decoration:none;
       font-weight:600;
-      background:linear-gradient(90deg,rgba(11,61,145,0.06),rgba(31,122,108,0.03));
-      border:1px solid rgba(11,61,145,0.06);
       color:var(--accent);
-      transition:background .12s, box-shadow .12s;
+      position:relative;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,0.55);
+      background: linear-gradient(180deg, rgba(255,255,255,var(--glass-alpha)), rgba(255,255,255,0.03));
+      box-shadow: 0 6px 18px rgba(10,20,30,0.05);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      backdrop-filter: blur(6px) saturate(120%);
+      -webkit-backdrop-filter: blur(6px) saturate(120%);
     }
-    .btn svg{
-      width:18px;
-      height:18px;
-      opacity:0.9;
-      color: var(--accent);
-      fill: var(--accent);
-      stroke: var(--accent);
-      /* For consistency, force background to none */
-      background:none;
-      border-radius:0;
-      display:inline;
-    }
-    .btn:active, .btn:focus {
-      background:linear-gradient(90deg,rgba(11,61,145,0.13),rgba(31,122,108,0.06));
-      box-shadow:0 0 0 2px var(--accent-2),0 4px 12px rgba(11,61,145,0.07);
-    }
-    /* Fix for solid square icon in mail button */
-    .btn.mail svg {
-      background: none !important;
-      border-radius: 0 !important;
-      fill: none !important;
-      stroke: var(--accent) !important;
-    }
-    .projects{margin-top:18px;display:flex;flex-direction:column;gap:10px}
-    .small{font-size:13px;color:var(--muted)}
-    footer{margin-top:22px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
-    .phone-btn{background:none;border:none;padding:0;margin:0;color:var(--accent);font-weight:600;cursor:pointer;font-size:13px;text-align:left;}
 
-    @media (max-width:640px){
-      body {
-        display: block;
-        padding: 16px 0 0 0;
-        min-height: 100vh;
-      }
-      .card{
-        padding: 18px 8px;
-        box-shadow: 0 4px 16px rgba(12,20,30,0.08);
-      }
-      .grid{grid-template-columns:1fr}
-      .avatar{width:64px;height:64px;font-size:22px;border-radius:10px}
-      h1{font-size:22px}
+    /* glossy highlight stripe using pseudo-element */
+    .btn::before{
+      content: "";
+      position: absolute;
+      left: -40%;
+      top: -30%;
+      width: 80%;
+      height: 50%;
+      transform: rotate(-18deg);
+      background: linear-gradient(90deg, rgba(255,255,255,0.55), rgba(255,255,255,0.12));
+      filter: blur(10px);
+      opacity: 0.6;
+      transition: left .4s cubic-bezier(.2,.9,.2,1);
+      pointer-events: none;
     }
+
+    .btn:hover::before{ left: 120%; } /* slide highlight across on hover */
+    .btn:hover{ transform: translateY(-4px); box-shadow: 0 18px 36px rgba(10,20,30,0.09); }
+
+    /* Icon styles inside buttons: use currentColor and size control */
+    .btn svg{ width:18px; height:18px; display:inline-block; color:var(--accent); fill:currentColor; stroke:currentColor; opacity:0.95; }
+
+    /* small utilities */
+    .small{ font-size:13px; color:var(--muted); }
+    footer{ margin-top:20px; display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:13px; opacity:0; transform: translateY(10px); transition: all .5s ease; }
+
+    /* responsive tweaks */
+    @media (max-width:840px){
+      .grid{ grid-template-columns: 1fr; }
+      header{ justify-content:flex-start; gap:14px; }
+      .card{ padding:22px; }
+      .avatar{ width:86px; height:86px; }
+      h1{ font-size:24px; }
+    }
+
+    /* Respect user preference for reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .btn, .block, footer { transition: none !important; animation: none !important; }
+      .btn::before { display:none; }
+    }
+
   </style>
 </head>
 <body>
-  <main class="card" role="main">
+  <!--
+    MAIN PAGE CONTENT
+    - Replace avatar src, CV/portfolio links, and social links below.
+    - Elements are intentionally semantic (header, main, footer) for accessibility.
+  -->
+
+  <main class="card" role="main" aria-labelledby="page-title">
+    <!-- Header with avatar and name -->
     <header>
-      <div class="avatar">
-        <img src="/IMG_7065 copy2.jpg" alt="Sajjad Biouki avatar" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+      <div class="avatar" aria-hidden="true">
+        <!-- Avatar image: replace with your image path inside the repo. Use a square photo for best fit. -->
+        <img src="/IMG_7065 copy2.jpg" alt="Sajjad Biouki portrait">
       </div>
+
       <div>
-        <h1>Sajjad Biouki</h1>
-        <p class="lead">MArch candidate — cultural & residential design • tectonics & social space</p>
+        <h1 id="page-title">Sajjad Biouki</h1>
+        <p class="lead">MArch candidate — cultural &amp; residential design · tectonics &amp; social space</p>
       </div>
     </header>
 
-    <section class="about">
+    <!-- Short bio / elevator pitch -->
+    <section class="about small" aria-label="About">
       <p>Architect focused on public and residential architecture. I work across concept, technical drawings and digital fabrication. My work explores materiality and social program to shape adaptable public spaces.</p>
     </section>
 
-    <div class="grid">
-      <div class="block">
-        <h3 style="margin:0 0 8px 0">Contact</h3>
-        <ul class="contact-list">
+    <!-- Main two-column grid -->
+    <div class="grid" role="region" aria-label="Contact and Links">
+      <!-- Left: Contact + CV + Downloads -->
+      <div class="block" id="contactBlock" tabindex="0" aria-labelledby="contactTitle">
+        <h3 id="contactTitle" style="margin:0 0 8px 0">Contact</h3>
+
+        <!-- Contact details: keep mailto: and tel: for native handling on phones -->
+        <ul class="contact-list" aria-hidden="false">
           <li><a href="mailto:mohammadsajjad.amrallahi@mail.polimi.it">mohammadsajjad.amrallahi@mail.polimi.it</a></li>
           <li class="contact-meta">
-            Phone: 
-            <a href="tel:+393770922559" id="phone-link" style="color:var(--accent);text-decoration:none;font-weight:600;">
+            Phone:
+            <a href="tel:+393770922559" id="phone-link" style="color:var(--accent); text-decoration:none; font-weight:600;" aria-label="Call phone number">
               +39 377 092 2559
             </a>
-            <button class="phone-btn" onclick="copyPhoneNumber()" title="Copy phone number">
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 16 16">
-                <rect x="4" y="2" width="8" height="12" rx="2" stroke-width="1.3"/>
-                <path d="M8 11h.01" stroke-width="1.3" stroke-linecap="round"/>
+            <!-- copy button for convenience -->
+            <button class="phone-btn" onclick="copyPhoneNumber()" title="Copy phone number" aria-label="Copy phone number">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="4" y="2" width="8" height="12" rx="2" stroke-width="1.2"/>
+                <path d="M8 11h.01" stroke-width="1.2" stroke-linecap="round"/>
               </svg>
-              Copy
+              <span class="small">Copy</span>
             </button>
           </li>
-          <li class="contact-meta">Address: Milan, Italy</li>
+          <li class="contact-meta">Location: Milan, Italy</li>
         </ul>
 
-        <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
-          <a class="btn" href="/CV 04-24.pdf" download>
-            <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none">
-              <path d="M6 20L18 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-              <path d="M12 4V16M12 16L15.5 12.5M12 16L8.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        <!-- Downloads column: CV + Portfolio -->
+        <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
+          <!-- Make sure the files exist at these paths, or point to Issuu / external links -->
+          <a class="btn" href="/CV 04-24.pdf" download aria-label="Download CV">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M6 20h12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M12 4v12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M8 12l4 4 4-4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
             Download CV
           </a>
-          <a class="btn" href="/Ako Amrallahi _ Architecture Portfolio.pdf" download>
-            <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none">
-              <path d="M6 20L18 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-              <path d="M12 4V16M12 16L15.5 12.5M12 16L8.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+
+          <a class="btn" href="/Ako Amrallahi _ Architecture Portfolio.pdf" download aria-label="Download Portfolio">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M6 20h12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M12 4v12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M8 12l4 4 4-4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
             Download Portfolio
           </a>
-          <a class="btn mail" href="mailto:mohammadsajjad.amrallahi@mail.polimi.it?subject=Portfolio%20Inquiry">
-            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <rect x="4" y="4" width="16" height="16" stroke-width="1.6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></rect>
-              <path d="M4 4l8 8 8-8" stroke-width="1.6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path>
+
+          <a class="btn mail" href="mailto:mohammadsajjad.amrallahi@mail.polimi.it?subject=Portfolio%20Inquiry" aria-label="Request full dossier by email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="2" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></rect>
+              <path d="M3 8l9 6 9-6" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>
             Request full dossier
           </a>
         </div>
       </div>
 
-      <div class="block">
-        <h3 style="margin:0 0 8px 0">Quick Links</h3>
-        <div class="links">
-          <a class="btn" href="https://www.linkedin.com/in/mohammad-sajjad-amrollahi-beyuki-980502a0" target="_blank" rel="noopener">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
-              <path fill="currentColor" d="M41,4H9C6.24,4,4,6.24,4,9v32c0,2.76,2.24,5,5,5h32c2.76,0,5-2.24,5-5V9C46,6.24,43.76,4,41,4z M17,20v19h-6V20H17z M11,14.47c0-1.4,1.2-2.47,3-2.47s2.93,1.07,3,2.47c0,1.4-1.12,2.53-3,2.53C12.2,17,11,15.87,11,14.47z M39,39h-6c0,0,0-9.26,0-10 c0-2-1-4-3.5-4.04h-0.08C27,24.96,26,27.02,26,29c0,0.91,0,10,0,10h-6V20h6v2.56c0,0,1.93-2.56,5.81-2.56 c3.97,0,7.19,2.73,7.19,8.26V39z"></path>
+      <!-- Right: Quick links to socials, portfolio, projects, certificates -->
+      <div class="block" id="linksBlock" tabindex="0" aria-labelledby="linksTitle">
+        <h3 id="linksTitle" style="margin:0 0 8px 0">Quick Links</h3>
+
+        <div class="links" role="list">
+          <!-- Link items: update hrefs to your real profiles -->
+          <a class="btn" href="https://www.linkedin.com/in/mohammad-sajjad-amrollahi-beyuki-980502a0" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <!-- LinkedIn icon: simplified and uses currentColor -->
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+              <path d="M6.94 8.5H4V20h2.94zM5.46 6.75a1.62 1.62 0 110-3.24 1.62 1.62 0 010 3.24zM9.5 8.5h2.82v1.57h.04c.39-.73 1.35-1.52 2.78-1.52 2.98 0 3.53 1.96 3.53 4.51V20h-2.94v-5.05c0-1.2-.02-2.73-1.66-2.73-1.66 0-1.91 1.3-1.91 2.64V20H9.5z"/>
             </svg>
             LinkedIn
           </a>
-          <a class="btn" href="https://www.instagram.com/sajjadbiouki" target="_blank" rel="noopener">
-            <svg role="img" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill="currentColor" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/>
-            </svg>
+
+          <a class="btn" href="https://www.instagram.com/sajjadbiouki" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M7.03.08c-1.28.06-2.14.26-2.91.56C3.33 1.16 2.66 1.58 2 2.25c-.66.67-1.08 1.34-1.38 2.13C.32 5.15.12 6.02.06 7.3.001 8.58-.01 8.99 0 12.25c.01 3.26.02 3.67.08 4.95.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.39 2.12.67.66 1.34 1.08 2.12 1.38.76.295 1.63.496 2.91.552 1.28.056 1.69.069 4.95.062 3.26-.006 3.67-.02 4.95-.08 1.28-.06 2.15-.264 2.91-.563.79-.308 1.46-.72 2.12-1.39.66-.667 1.08-1.34 1.38-2.13.295-.76.496-1.63.552-2.91.056-1.28.069-1.69.062-4.95-.006-3.26-.02-3.67-.08-4.95-.06-1.28-.264-2.15-.563-2.91-.308-.79-.72-1.46-1.39-2.12C21.298 1.33 20.63.92 19.838.616 19.074.321 18.202.12 16.925.064 15.647.009 15.236-.005 11.977.001 8.718.007 8.31.021 7.03.083zM8 12a4 4 0 11.008 7.992A4 4 0 018 12zM16.95 5.59a1.44 1.44 0 110 2.88 1.44 1.44 0 010-2.88z"/></svg>
             Instagram
           </a>
-          <a class="btn" href="https://www.behance.net/sajjadbiouki" target="_blank" rel="noopener">
-            <svg role="img" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill="currentColor" d="M16.969 16.927a2.561 2.561 0 0 0 1.901.677 2.501 2.501 0 0 0 1.531-.475c.362-.235.636-.584.779-.99h2.585a5.091 5.091 0 0 1-1.9 2.896 5.292 5.292 0 0 1-3.091.88 5.839 5.839 0 0 1-2.284-.433 4.871 4.871 0 0 1-1.723-1.211 5.657 5.657 0 0 1-1.08-1.874 7.057 7.057 0 0 1-.383-2.393c-.005-.8.129-1.595.396-2.349a5.313 5.313 0 0 1 5.088-3.604 4.87 4.87 0 0 1 2.376.563c.661.362 1.231.87 1.668 1.485a6.2 6.2 0 0 1 .943 2.133c.194.821.263 1.666.205 2.508h-7.699c-.063.79.184 1.574.688 2.187ZM6.947 4.084a8.065 8.065 0 0 1 1.928.198 4.29 4.29 0 0 1 1.49.638c.418.303.748.711.958 1.182.241.579.357 1.203.341 1.83a3.506 3.506 0 0 1-.506 1.961 3.726 3.726 0 0 1-1.503 1.287 3.588 3.588 0 0 1 2.027 1.437c.464.747.697 1.615.67 2.494a4.593 4.593 0 0 1-.423 2.032 3.945 3.945 0 0 1-1.163 1.413 5.114 5.114 0 0 1-1.683.807 7.135 7.135 0 0 1-1.928.259H0V4.084h6.947Zm-.235 12.9c.308.004.616-.029.916-.099a2.18 2.18 0 0 0 .766-.332c.228-.158.411-.371.534-.619.142-.317.208-.663.191-1.009a2.08 2.08 0 0 0-.642-1.715 2.618 2.618 0 0 0-1.696-.505h-3.54v4.279h3.471Zm13.635-5.967a2.13 2.13 0 0 0-1.654-.619 2.336 2.336 0 0 0-1.163.259 2.474 2.474 0 0 0-.738.62 2.359 2.359 0 0 0-.396.792c-.074.239-.12.485-.137.734h4.769a3.239 3.239 0 0 0-.679-1.785l-.002-.001Zm-13.813-.648a2.254 2.254 0 0 0 1.423-.433c.399-.355.607-.88.56-1.413a1.916 1.916 0 0 0-.178-.891 1.298 1.298 0 0 0-.495-.533 1.851 1.851 0 0 0-.711-.274 3.966 3.966 0 0 0-.835-.073H3.241v3.631h3.293v-.014ZM21.62 5.122h-5.976v1.527h5.976V5.122Z"/>
-            </svg>
+
+          <a class="btn" href="https://www.behance.net/sajjadbiouki" target="_blank" rel="noopener" aria-label="Behance">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M16.97 16.93a2.56 2.56 0 0 0 1.9.68 2.5 2.5 0 0 0 1.53-.48c.36-.23.64-.58.78-.99h2.58a5.09 5.09 0 0 1-1.9 2.9c-.97.74-2.11 1.1-3.09.88a5.84 5.84 0 0 1-2.28-.43 4.87 4.87 0 0 1-1.72-1.21 5.66 5.66 0 0 1-1.08-1.87 7.06 7.06 0 0 1-.38-2.39c-.01-.8.13-1.6.4-2.35a5.31 5.31 0 0 1 5.09-3.6c.8 0 1.54.15 2.18.48"></path></svg>
             Behance
           </a>
-          <a class="btn" href="https://issuu.com/sajjadbiouki/portfolio" target="_blank" rel="noopener">
-            <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Issuu</title>
-              <path fill="currentColor" d="M.996 0A.998.998 0 0 0 0 .996V12c0 6.628 5.372 12 12 12s12-5.372 12-12S18.628 0 12 0H.996zm11.17 3.582a8.333 8.333 0 0 1 8.254 8.41 8.333 8.333 0 0 1-8.41 8.252c-4.597-.045-8.296-3.81-8.254-8.41.045-4.6 3.81-8.296 8.41-8.252zm-.031 2.27a6.107 6.107 0 0 0-6.155 6.046 6.109 6.109 0 0 0 6.05 6.163 6.099 6.099 0 0 0 6.154-6.047 6.107 6.107 0 0 0-6.041-6.162h-.008zm-.02 3.013a3.098 3.098 0 0 1 3.063 3.123 3.088 3.088 0 0 1-3.121 3.06l.002-.001a3.091 3.091 0 0 1 .056-6.182z"/>
-            </svg>
+
+          <a class="btn" href="https://issuu.com/sajjadbiouki/portfolio" target="_blank" rel="noopener" aria-label="Issuu Portfolio">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M.996 0A.998.998 0 0 0 0 .996V12c0 6.628 5.372 12 12 12s12-5.372 12-12S18.628 0 12 0H.996zm11.17 3.582a8.333 8.333 0 0 1 8.254 8.41 8.333 8.333 0 0 1-8.41 8.252c-4.597-.045-8.296-3.81-8.254-8.41.045-4.6 3.81-8.296 8.41-8.252zm-.031 2.27a6.107 6.107 0 0 0-6.155 6.046 6.109 6.109 0 0 0 6.05 6.163 6.099 6.099 0 0 0 6.154-6.047 6.107 6.107 0 0 0-6.041-6.162h-.008z"/></svg>
             Issuu
           </a>
-          <a class="btn" href="/certificates/index.html" target="_blank">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 5 2-7L2 9h7z" stroke-width="1.4" stroke="currentColor"></path>
-            </svg>
+
+          <a class="btn" href="/certificates/index.html" aria-label="Certificates" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 5 2-7L2 9h7z" stroke-width="1.4" stroke="currentColor"></path></svg>
             Certificates
           </a>
-          <a class="btn" href="/projects/index.html" target="_blank">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M3 7h18M3 12h18M3 17h18" stroke-width="1.6" stroke="currentColor"></path>
-            </svg>
+
+          <a class="btn" href="/projects/index.html" aria-label="Selected Projects" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18" stroke-width="1.6" stroke="currentColor"></path></svg>
             Selected Projects
           </a>
+
         </div>
       </div>
     </div>
 
-    <div class="projects">
-      <div class="block small">
+    <!-- small friendly closing block -->
+    <div class="projects" style="margin-top:18px;">
+      <div class="block small" id="closingBlock" tabindex="0" aria-label="Closing note">
         <strong>See you soon!</strong> — Looking forward to connecting.
       </div>
     </div>
 
-    <footer>
+    <!-- Footer with copyright -->
+    <footer id="pageFooter">
       <div>© <span id="year"></span> Mohammad Sajjad Amrallahi Biouki</div>
+      <div class="small">Minimal Links • Built for portfolio sharing</div>
     </footer>
   </main>
 
   <script>
+    /******************************************************************
+     *  JavaScript section
+     *  - IntersectionObserver for fade-up animations
+     *  - copyPhoneNumber helper (clipboard)
+     *  - small accessibility considerations (reduced motion)
+     ******************************************************************/
+
+    // Insert current year in footer
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // COPY PHONE NUMBER helper — copies the visible phone number to clipboard
     function copyPhoneNumber() {
-      const phone = "+39 377 092 2559";
+      const phone = "+39 377 092 2559"; // update if you change displayed number
+      if (!navigator.clipboard) {
+        // fallback for very old browsers
+        const ta = document.createElement('textarea');
+        ta.value = phone;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch(e){ /* ignore */ }
+        ta.remove();
+        return;
+      }
       navigator.clipboard.writeText(phone).then(function() {
         const btn = document.querySelector('.phone-btn');
         const prev = btn.innerHTML;
-        btn.innerHTML = 'Copied!';
-        setTimeout(() => btn.innerHTML = prev, 1000);
+        btn.innerHTML = 'Copied ✓';
+        btn.setAttribute('aria-live','polite');
+        setTimeout(() => btn.innerHTML = prev, 1200);
+      }, function(){
+        // silent fail — optionally show a tooltip or toast
       });
     }
+
+    // Fade-up animation using IntersectionObserver
+    (function(){
+      // if user prefers reduced motion, skip animations
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) {
+        document.querySelectorAll('.block, footer').forEach(el => el.classList.add('show'));
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+            // unobserve to run the animation only once
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      // Observe all blocks + footer for animated entrance
+      document.querySelectorAll('.block, footer, header, .about').forEach(el => observer.observe(el));
+    })();
+
+    // Small progressive enhancement: keyboard focus visible
+    document.addEventListener('keyup', function(e){
+      if (e.key === 'Tab') document.documentElement.classList.add('show-focus');
+    });
+
   </script>
 </body>
 </html>
