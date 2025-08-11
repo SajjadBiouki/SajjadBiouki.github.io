@@ -49,17 +49,41 @@
     .contact-list a{color:var(--accent);text-decoration:none;font-weight:600}
     .contact-meta{color:var(--muted);font-size:13px}
     .links{display:flex;flex-direction:column;gap:10px}
-    .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;text-decoration:none;font-weight:600;background:linear-gradient(90deg,rgba(11,61,145,0.06),rgba(31,122,108,0.03));border:1px solid rgba(11,61,145,0.06);color:var(--accent);}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:600;
+      background:linear-gradient(90deg,rgba(11,61,145,0.06),rgba(31,122,108,0.03));
+      border:1px solid rgba(11,61,145,0.06);
+      color:var(--accent);
+      transition:background .12s, box-shadow .12s;
+    }
     .btn svg{
       width:18px;
       height:18px;
       opacity:0.9;
-      /* Force icon color to match text color */
       color: var(--accent);
-      fill: none;
-      stroke: var(--accent);
-      /* For icons using fill only */
       fill: var(--accent);
+      stroke: var(--accent);
+      /* For consistency, force background to none */
+      background:none;
+      border-radius:0;
+      display:inline;
+    }
+    .btn:active, .btn:focus {
+      background:linear-gradient(90deg,rgba(11,61,145,0.13),rgba(31,122,108,0.06));
+      box-shadow:0 0 0 2px var(--accent-2),0 4px 12px rgba(11,61,145,0.07);
+    }
+    /* Fix for solid square icon in mail button */
+    .btn.mail svg {
+      background: none !important;
+      border-radius: 0 !important;
+      fill: none !important;
+      stroke: var(--accent) !important;
     }
     .projects{margin-top:18px;display:flex;flex-direction:column;gap:10px}
     .small{font-size:13px;color:var(--muted)}
@@ -134,7 +158,7 @@
             </svg>
             Download Portfolio
           </a>
-          <a class="btn" href="mailto:mohammadsajjad.amrallahi@mail.polimi.it?subject=Portfolio%20Inquiry">
+          <a class="btn mail" href="mailto:mohammadsajjad.amrallahi@mail.polimi.it?subject=Portfolio%20Inquiry">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <rect x="4" y="4" width="16" height="16" stroke-width="1.6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></rect>
               <path d="M4 4l8 8 8-8" stroke-width="1.6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -195,7 +219,6 @@
 
     <footer>
       <div>© <span id="year"></span> Sajjad Biouki</div>
-      <div class="small">Built with ❤️</div>
     </footer>
   </main>
 
