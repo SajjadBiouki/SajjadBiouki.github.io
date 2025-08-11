@@ -30,54 +30,50 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      /* Page background, font setup, centering main content */
       margin:0;
       font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
       background:linear-gradient(180deg,rgba(11,61,145,0.02),rgba(31,122,108,0.01));
       color:#111;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-      display:flex;align-items:center;justify-content:center;padding:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px;
+      min-height:100vh;
     }
 
-    /* Card component for main content */
     .card{
       width:100%;max-width:var(--maxw);background:var(--card);border-radius:var(--radius);box-shadow:0 18px 40px rgba(12,20,30,0.06);padding:42px;
     }
-
-    /* Header styles: avatar and intro */
     header{display:flex;gap:18px;align-items:center}
     .avatar{width:84px;height:84px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-family:Playfair Display,serif;font-size:28px}
-
     h1{font-family:Playfair Display,serif;margin:0;font-size:28px}
     p.lead{margin:6px 0 0;color:var(--muted);font-size:14px}
-
-    /* About section styling */
     .about{margin-top:20px;line-height:1.45;color:#222}
-
-    /* Grid layout for contact and quick links */
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
-
-    /* Block elements for grouping sections */
     .block{background:linear-gradient(180deg,#fff,#fbfbfb);padding:14px;border-radius:12px;border:1px solid rgba(15,20,30,0.03)}
     .contact-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
     .contact-list a{color:var(--accent);text-decoration:none;font-weight:600}
     .contact-meta{color:var(--muted);font-size:13px}
-
-    /* Quick links and buttons styling */
     .links{display:flex;flex-direction:column;gap:10px}
     .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;text-decoration:none;font-weight:600;background:linear-gradient(90deg,rgba(11,61,145,0.06),rgba(31,122,108,0.03));border:1px solid rgba(11,61,145,0.06);color:var(--accent);}
     .btn svg{width:18px;height:18px;opacity:0.9}
-
-    /* Projects and featured section styling */
     .projects{margin-top:18px;display:flex;flex-direction:column;gap:10px}
     .small{font-size:13px;color:var(--muted)}
-
-    /* Footer styling */
     footer{margin-top:22px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
 
     /* Responsive design for mobile screens */
     @media (max-width:640px){
+      body {
+        display: block;
+        padding: 16px 0 0 0; /* Less top padding, no horizontal padding */
+        min-height: 100vh;
+      }
+      .card{
+        padding: 18px 8px;
+        box-shadow: 0 4px 16px rgba(12,20,30,0.08);
+      }
       .grid{grid-template-columns:1fr}
       .avatar{width:64px;height:64px;font-size:22px;border-radius:10px}
       h1{font-size:22px}
@@ -120,8 +116,8 @@
         <!-- Contact section -->
         <h3 style="margin:0 0 8px 0">Contact</h3>
         <ul class="contact-list">
-          <li><a href="mailto:youremail@example.com">youremail@example.com</a></li>
-          <li class="contact-meta">Phone: +39 123 456 7890</li>
+          <li><a href="mailto:sajjadbiouki@gmail.com">sajjadbiouki@gmail.com</a></li>
+          <li class="contact-meta">Phone: +39 380 475 2953</li>
           <li class="contact-meta">Address: Rome, Italy</li>
         </ul>
 
@@ -143,7 +139,7 @@
         <h3 style="margin:0 0 8px 0">Quick Links</h3>
         <div class="links">
           <!-- LinkedIn profile link -->
-          <a class="btn" href="linkedin.com/in/mohammad-sajjad-amrollahi-beyuki-980502a0" target="_blank" rel="noopener">
+          <a class="btn" href="https://linkedin.com/in/mohammad-sajjad-amrollahi-beyuki-980502a0" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-14h4v2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
               <rect x="2" y="9" width="4" height="12" rx="1" stroke-width="1.6"></rect>
@@ -160,7 +156,7 @@
             Instagram
           </a>
           <!-- Behance profile link -->
-          <a class="btn" href="https://www.behance.net/your-behance" target="_blank" rel="noopener">
+          <a class="btn" href="https://www.behance.net/sajjadbiouki" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M5 12h4a3 3 0 0 0 0-6H5v6zM4 18h5a3 3 0 0 0 0-6H4v6zM20 9h-3v9h3" stroke-width="1.6"></path>
             </svg>
@@ -201,9 +197,9 @@
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
         <!-- Link to condensed portfolio PDF (update href as needed) -->
-        <a class="btn" href="https://issuu.com/your-portfolio" target="_blank">View condensed PDF</a>
+        <a class="btn" href="https://issuu.com/sajjadbiouki" target="_blank">View condensed PDF</a>
         <!-- Link to request full dossier via email -->
-        <a class="btn" href="mailto:youremail@example.com?subject=Portfolio%20Inquiry">Request full dossier</a>
+        <a class="btn" href="mailto:sajjadbiouki@gmail.com?subject=Portfolio%20Inquiry">Request full dossier</a>
       </div>
     </div>
 
