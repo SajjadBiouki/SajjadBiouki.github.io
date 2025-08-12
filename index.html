@@ -15,6 +15,8 @@
       * Adjust color palette using the --accent / --accent-2 / --muted variables.
       * "Copy phone number" is now a simple text link, not a button.
       * Description comments for your understanding only, not shown on the site.
+      * Footer now always visible (opacity:1).
+      * New logo for "Request full dossier" button.
   -->
 
   <meta charset="utf-8" />
@@ -184,7 +186,7 @@
     .btn:hover{ transform: translateY(-4px); box-shadow: 0 18px 36px rgba(10,20,30,0.09); }
     .btn svg{ width:18px; height:18px; display:inline-block; color:var(--accent); fill:currentColor; stroke:currentColor; opacity:0.95; }
     .small{ font-size:13px; color:var(--muted); }
-    footer{ margin-top:20px; display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:13px; opacity:0; transform: translateY(10px); transition: all .5s ease; }
+    footer{ margin-top:20px; display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:13px; opacity:1; transform: translateY(0); transition: all .5s ease; }
     @media (max-width:840px){
       .grid{ grid-template-columns: 1fr; }
       header{ justify-content:flex-start; gap:14px; }
@@ -232,6 +234,7 @@
           <li class="contact-meta">Location: Milan, Italy</li>
         </ul>
         <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
+          <!-- CV DOWNLOAD BUTTON -->
           <a class="btn" href="/CV 04-24.pdf" download aria-label="Download CV">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
               <path d="M6 20h12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -240,6 +243,7 @@
             </svg>
             Download CV
           </a>
+          <!-- PORTFOLIO DOWNLOAD BUTTON -->
           <a class="btn" href="/Ako Amrallahi _ Architecture Portfolio.pdf" download aria-label="Download Portfolio">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
               <path d="M6 20h12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -248,8 +252,9 @@
             </svg>
             Download Portfolio
           </a>
+          <!-- REQUEST FULL DOSSIER BUTTON WITH NEW LOGO -->
           <a class="btn mail" href="mailto:mohammadsajjad.amrallahi@mail.polimi.it?subject=Portfolio%20Inquiry" aria-label="Request full dossier by email">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
               <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
             </svg>
@@ -301,6 +306,7 @@
         <strong>See you soon!</strong> — Looking forward to connecting.
       </div>
     </div>
+    <!-- FOOTER, now visible by default -->
     <footer id="pageFooter">
       <div>© <span id="year"></span> Mohammad Sajjad Amrallahi Biouki</div>
       <div class="small">Minimal Links • Built for portfolio sharing</div>
