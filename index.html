@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sajjad Biouki — Projects (test)</title>
+<title>Sajjad Biouki — Portfolio</title>
 
 <!--
   BACKGROUND IMAGE
@@ -31,6 +31,14 @@
   - Layout: grid + panel positions are absolute %, measured directly from
     your reference sketch's pixel coordinates (1920x1080 canvas). If you
     change the composition, these will need re-measuring, not guessing.
+  - Project pages: NOT declared anywhere in this file. Clicking cell N
+    (1-indexed) probes for Project_N_Page_1.jpg, _2.jpg, _3.jpg... and
+    stops at the first missing one — whatever's found becomes the page
+    list. Just upload jpgs with that naming pattern next to this file (or
+    in the same GitHub repo folder) and it works, no code changes needed.
+    See the "AUTO-DISCOVERY OF PAGE IMAGES" comment in the script for
+    details, including why this can't be demonstrated in this chat's
+    inline preview.
 -->
 
 <style>
@@ -148,17 +156,91 @@
     font-size:clamp(12px,1vw,14px);
     line-height:1.5;
   }
+
+  /* ---------- MAIN MENU / PROJECT VIEW SWITCHING ---------- */
+  .screen{
+    position:absolute;
+    inset:0;
+  }
+  #projectView{ display:none; }
+
+  /* ---------- PROJECT VIEW: pager ---------- */
+  .pager{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    background:#000;
+  }
+  .page{
+    position:absolute;
+    inset:0;
+    transition:transform .55s cubic-bezier(.65,0,.35,1);
+  }
+  .page img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+
+  .back-btn{
+    position:absolute;
+    top:18px;
+    left:18px;
+    z-index:2;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:none;
+    background:rgba(255,255,255,.85);
+    color:#111;
+    font-size:16px;
+    line-height:1;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .back-btn:hover{ transform:scale(1.08); background:#fff; }
+
+  .page-indicator{
+    position:absolute;
+    bottom:16px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:2;
+    color:rgba(255,255,255,.85);
+    font-size:12px;
+    letter-spacing:.5px;
+    background:rgba(0,0,0,.35);
+    padding:4px 10px;
+    border-radius:999px;
+  }
 </style>
 </head>
 <body>
 
-  <div class="stage">
-    <div class="grid" id="grid"></div>
+  <div class="stage" id="stage">
 
-    <div class="panel" id="panel">
-      <h1 id="panelTitle">Selected Projects</h1>
-      <p id="panelDesc">Hover over any tile to preview a project.</p>
+    <div class="screen" id="mainMenu">
+      <div class="grid" id="grid"></div>
+
+      <div class="panel" id="panel">
+        <h1 id="panelTitle">Selected Projects</h1>
+        <p id="panelDesc">Hover over any tile to preview a project.</p>
+      </div>
     </div>
+
+    <div class="screen" id="projectView">
+      <button class="back-btn" id="backBtn" aria-label="Back to main menu">&larr;</button>
+      <div class="pager" id="pager">
+        <div class="pager-track" id="pagerTrack"></div>
+      </div>
+      <div class="page-indicator" id="pageIndicator"></div>
+    </div>
+
   </div>
 
 <script>
@@ -179,6 +261,53 @@
     `<svg viewBox="0 0 504 360"><defs><style>.i04c{stroke:#231f20;stroke-width:10px;}.i04c,.i04d{fill:none;stroke-miterlimit:10;}.i04d{stroke:#fff;}</style></defs><g><path class="i04c" d="M36,288c72-36,72-144,72-144,0,0,0-108,72-144"/><path class="i04c" d="M180,288c72-36,72-144,72-144,0,0,0-108,72-144"/><path class="i04c" d="M324,288c72-36,72-144,72-144C396,144,396,36,468,0"/><line class="i04c" x1="504" y1="288" y2="288"/><line class="i04c" y1="144" x2="504" y2="144"/></g></svg>`
   ];
 
+  // ---------- AUTO-DISCOVERY OF PAGE IMAGES ----------
+  // No page counts are declared anywhere. For a given project number, this
+  // tries to load Project_{n}_Page_1.jpg, _2.jpg, _3.jpg... and simply
+  // stops at the first one that doesn't exist. Whatever loaded becomes the
+  // page list. Add or remove jpgs in the repo and the site adjusts itself
+  // automatically — nothing in this file needs to change.
+  //
+  // NOTE ON TESTING: this only works when the jpgs are actually reachable
+  // next to this html file — either opened locally from the same folder,
+  // or once it's live on GitHub Pages. The inline preview in this chat
+  // can't demonstrate it (it only has this one file, no real neighbours
+  // to fetch), so don't be alarmed if project cells look unresponsive
+  // here — download everything into one folder to actually test this.
+  const MAX_PAGES_TO_CHECK = 25;
+  const pageCache = {};
+
+  function probeProjectPages(projectNum) {
+    if (pageCache[projectNum]) return pageCache[projectNum];
+    const checks = [];
+    for (let p = 1; p <= MAX_PAGES_TO_CHECK; p++) {
+      const src = `Project_${projectNum}_Page_${p}.jpg`;
+      checks.push(new Promise((resolve) => {
+        const img = new Image();
+        img.onload  = () => resolve({ p, src, ok: true });
+        img.onerror = () => resolve({ p, src, ok: false });
+        img.src = src;
+      }));
+    }
+    const promise = Promise.all(checks).then((results) => {
+      const pages = [];
+      for (let p = 1; p <= MAX_PAGES_TO_CHECK; p++) {
+        const r = results.find((r) => r.p === p);
+        if (r && r.ok) pages.push(r.src); else break; // stop at first gap
+      }
+      return pages;
+    });
+    pageCache[projectNum] = promise;
+    return promise;
+  }
+
+  function comingSoonPage(){
+    return `<svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">
+      <rect width="1920" height="1080" fill="#222"/>
+      <text x="960" y="540" font-size="90" font-family="Helvetica, Arial, sans-serif" fill="#fff" text-anchor="middle">Coming soon</text>
+    </svg>`;
+  }
+
   // placeholder titles / descriptions — replace with your real project text
   const projects = Array.from({ length: 9 }, (_, i) => ({
     title: `Project ${String(i + 1).padStart(2, '0')} — Working Title`,
@@ -189,8 +318,15 @@
   const grid = document.getElementById('grid');
   const panelTitle = document.getElementById('panelTitle');
   const panelDesc  = document.getElementById('panelDesc');
+  const stage = document.getElementById('stage');
+  const mainMenu = document.getElementById('mainMenu');
+  const projectView = document.getElementById('projectView');
+  const pager = document.getElementById('pager');
+  const pagerTrack = document.getElementById('pagerTrack');
+  const pageIndicator = document.getElementById('pageIndicator');
+  const backBtn = document.getElementById('backBtn');
 
-  projects.forEach((p) => {
+  projects.forEach((p, idx) => {
     const cell = document.createElement('div');
     cell.className = 'cell';
     cell.innerHTML = `
@@ -205,7 +341,105 @@
       panelTitle.textContent = DEFAULT_TITLE;
       panelDesc.textContent  = DEFAULT_DESC;
     });
+    // every cell is clickable — whether it actually has pages is only
+    // known once we've probed for its Project_{n}_Page_{p}.jpg files
+    cell.style.cursor = 'pointer';
+    cell.addEventListener('click', () => openProject(idx));
     grid.appendChild(cell);
+  });
+
+  // ---------- PROJECT VIEW / PAGER ----------
+  let currentProject = null;
+  let currentPage = 0;
+  let pageEls = [];
+  let isProjectOpen = false;
+  let navLocked = false;
+
+  async function openProject(idx){
+    currentProject = idx;
+    currentPage = 0;
+    const projectNum = idx + 1;
+    const discovered = await probeProjectPages(projectNum);
+    const pages = discovered.length
+      ? discovered.map(src => `<img src="${src}" alt="${projects[idx].title} page">`)
+      : [comingSoonPage()];
+    pagerTrack.innerHTML = pages
+      .map(html => `<div class="page">${html}</div>`)
+      .join('');
+    pageEls = Array.from(pagerTrack.children);
+    layoutPages(false);
+    updateIndicator();
+    mainMenu.style.display = 'none';
+    projectView.style.display = 'block';
+    isProjectOpen = true;
+  }
+
+  function closeProject(){
+    projectView.style.display = 'none';
+    mainMenu.style.display = 'block';
+    isProjectOpen = false;
+  }
+
+  function layoutPages(animate){
+    pageEls.forEach((el, i) => {
+      el.style.transition = animate === false ? 'none' : '';
+      const diff = i - currentPage;
+      el.style.transform = diff === 0 ? 'translateY(0)'
+                          : diff < 0 ? 'translateY(-100%)'
+                          : 'translateY(100%)';
+    });
+    if (animate === false) {
+      // force layout so the "no transition" jump is applied before re-enabling it
+      void pagerTrack.offsetHeight;
+      pageEls.forEach(el => { el.style.transition = ''; });
+    }
+  }
+
+  function updateIndicator(){
+    pageIndicator.textContent = `${currentPage + 1} / ${pageEls.length}`;
+  }
+
+  function goNext(){
+    if (currentPage < pageEls.length - 1) {
+      currentPage++;
+      layoutPages();
+      updateIndicator();
+    } else {
+      closeProject(); // past the last page -> back to main menu
+    }
+  }
+
+  function goPrev(){
+    if (currentPage > 0) {
+      currentPage--;
+      layoutPages();
+      updateIndicator();
+    } else {
+      closeProject(); // before the first page -> back to main menu
+    }
+  }
+
+  backBtn.addEventListener('click', closeProject);
+
+  pager.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (navLocked) return;
+    navLocked = true;
+    if (e.deltaY > 0) goNext(); else if (e.deltaY < 0) goPrev();
+    setTimeout(() => { navLocked = false; }, 650);
+  }, { passive: false });
+
+  document.addEventListener('keydown', (e) => {
+    if (!isProjectOpen) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      if (!navLocked) { navLocked = true; goNext(); setTimeout(() => { navLocked = false; }, 650); }
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      if (!navLocked) { navLocked = true; goPrev(); setTimeout(() => { navLocked = false; }, 650); }
+    } else if (e.key === 'Escape') {
+      closeProject();
+    }
   });
 </script>
 </body>
