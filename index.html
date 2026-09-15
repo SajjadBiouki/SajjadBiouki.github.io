@@ -104,43 +104,76 @@
     transition:transform var(--drape-duration) cubic-bezier(.65,0,.35,1);
     pointer-events:none;
   }
-  .cell:hover .drape{ transform:scaleY(1); }
+  .cell.revealed .drape{ transform:scaleY(1); }
 
-  /* the icon that fades in once the drape has finished covering the cell */
+  /* the icon + caption that fade in once the drape has covered the cell —
+     stay revealed permanently afterward via the .revealed class (added on
+     first hover, never removed) */
   .icon{
     /* inset measured from your reference picture: ~7.8% sides, ~20% top/bottom of each cell */
     position:absolute;
     top:20%; bottom:20%; left:7.8%; right:7.8%;
     display:flex;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
+    gap:6%;
     opacity:0;
     transition:opacity var(--icon-duration) ease;
     transition-delay:0s;
     pointer-events:none;
   }
-  .cell:hover .icon{
+  .cell.revealed .icon{
     opacity:1;
     transition-delay:var(--drape-duration);
   }
-  .icon svg{
+  /* svg scaled down to ~75% of the box width (was 100%) to leave room for the caption below */
+  .icon-svg-wrap{
+    width:75%;
+  }
+  .icon-svg-wrap svg{
     width:100%;
-    height:100%;
+    height:auto;
+    display:block;
+  }
+  /* three-line caption: title (centered) + two detail lines — edit the
+     content in the `projects` array, not here */
+  .icon-caption{
+    width:100%;
+    border:1px solid #111;
+    padding:6% 8%;
+    text-align:center;
+    background:rgba(255,255,255,.92);
+  }
+  .icon-caption .cap-title{
+    margin:0 0 4%;
+    font-weight:700;
+    text-decoration:underline;
+    font-size:clamp(8px,1vw,12px);
+    line-height:1.25;
+  }
+  .icon-caption .cap-sub{
+    margin:0;
+    font-size:clamp(6.5px,.8vw,9.5px);
+    color:#333;
+    line-height:1.3;
   }
 
   /* ---------- SIDE PANEL: text now lives here instead of on top ---------- */
   .panel{
-    /* position + size measured from the reference sketch (1324,47)-(1648,1023) out of 1920x1080 */
+    /* widened to 2x (33.76% vs the original 16.88%) per your request — grid
+       position/size above is untouched. Left is pulled in from 68.96% to
+       64.24% (a smaller gap off the grid's right edge at 61.72%) so the
+       wider box still ends at ~98%, just inside the stage's right edge */
     position:absolute;
-    left:68.96%;
+    left:64.24%;
     top:4.35%;
-    width:16.88%;
+    width:33.76%;
     height:90.37%;
     display:flex;
     flex-direction:column;
-    align-items:center;
+    align-items:stretch; /* was "center" — text needs full box width to right-align */
     justify-content:center;
-    text-align:center;
     padding:6%;
     background:transparent; /* your sketch already draws this box — no CSS border needed */
   }
@@ -149,12 +182,14 @@
     font-size:clamp(16px,1.6vw,22px);
     font-weight:600;
     color:#111;
+    text-align:center; /* title stays centered */
   }
   .panel p{
     margin:0;
     color:#555;
     font-size:clamp(12px,1vw,14px);
     line-height:1.5;
+    text-align:right; /* description paragraphs go right-aligned */
   }
 
   /* ---------- MAIN MENU / PROJECT VIEW SWITCHING ---------- */
@@ -308,12 +343,87 @@
     </svg>`;
   }
 
-  // placeholder titles / descriptions — replace with your real project text
-  const projects = Array.from({ length: 9 }, (_, i) => ({
-    title: `Project ${String(i + 1).padStart(2, '0')} — Working Title`,
-    desc:  `Placeholder description for project ${i + 1}. Replace this with a short summary of the concept, materials, and method.`,
-    icon:  icons[i]
-  }));
+  // 9 separate, individually-editable project entries — 45 distinct
+  // strings total (title/desc/capTitle/capType/capLoc x 9), not a template
+  // with numbers swapped. Edit any one directly. Project 07's text already
+  // matches the real Karakal Desert Eco-Lodge pages you uploaded; the
+  // other 8 are placeholder text loosely themed around your other known
+  // work, purely so they read as real sentences instead of "Project 0X" —
+  // replace with whatever's actually true for each project.
+  const projects = [
+    { // cell 1 — top-left
+      title: 'Reviving the Silent Courtyard',
+      desc:  'A study in adapting traditional courtyard typologies for dense urban infill, balancing daylight, privacy, and shared space.',
+      capTitle: 'The Silent Courtyard',
+      capType:  'Urban Housing Concept',
+      capLoc:   'Isfahan, Iran — 2022',
+      icon: icons[0]
+    },
+    { // cell 2 — top-middle
+      title: 'Folding Ground',
+      desc:  'An origami-inspired folded-plate roof structure designed to double as passive shading for a desert gathering pavilion.',
+      capTitle: 'Folding Ground Pavilion',
+      capType:  'Structural & Shading Study',
+      capLoc:   'Yazd, Iran — 2021',
+      icon: icons[1]
+    },
+    { // cell 3 — top-right
+      title: 'Threaded Skins',
+      desc:  'A parametric facade generated through physics-based relaxation, tuned to filter direct sun while keeping sightlines open.',
+      capTitle: 'Threaded Skins Facade',
+      capType:  'Computational Facade Design',
+      capLoc:   'Milan, Italy — 2023',
+      icon: icons[2]
+    },
+    { // cell 4 — middle-left
+      title: 'The Weight of Air',
+      desc:  'A lightweight tensile canopy proposal for a temporary market hall, built around rapid assembly and disassembly.',
+      capTitle: 'The Weight of Air',
+      capType:  'Tensile Structure Proposal',
+      capLoc:   'Tehran, Iran — 2020',
+      icon: icons[3]
+    },
+    { // cell 5 — middle-middle
+      title: 'Between Two Rivers',
+      desc:  'A masterplan reconnecting a divided riverside district through a chain of pedestrian bridges and terraced public space.',
+      capTitle: 'Between Two Rivers',
+      capType:  'Urban Masterplan',
+      capLoc:   'Ahvaz, Iran — 2019',
+      icon: icons[4]
+    },
+    { // cell 6 — middle-right
+      title: 'Robotic Vaulting',
+      desc:  'A fabrication method using a 6-axis robotic arm to lay compression-only brick vaults with no formwork.',
+      capTitle: 'Robotic Vaulting Method',
+      capType:  'Digital Fabrication Research',
+      capLoc:   'Aachen, Germany — 2023',
+      icon: icons[5]
+    },
+    { // cell 7 — bottom-left — matches the real uploaded Karakal pages
+      title: 'Karakal Desert Eco-Lodge',
+      desc:  "A bachelor's thesis shaping low-profile vaulted guest rooms that follow the natural contour of the desert dunes.",
+      capTitle: 'Karakal Desert Eco-Lodge',
+      capType:  "Bachelor's Thesis Project",
+      capLoc:   'Yazd, Iran — 2021',
+      icon: icons[6]
+    },
+    { // cell 8 — bottom-middle
+      title: 'PrintTerra',
+      desc:  'A robotically 3D-printed earthen village shaped by climate-driven form-finding for passive cooling and structural efficiency.',
+      capTitle: 'PrintTerra Village',
+      capType:  '3D-Printed Earthen Architecture',
+      capLoc:   'Yazd, Iran — 2025',
+      icon: icons[7]
+    },
+    { // cell 9 — bottom-right
+      title: 'The Double Skin',
+      desc:  'A ventilated double-skin facade retrofit for an existing office tower, cutting solar gain while keeping the original curtain wall.',
+      capTitle: 'TSETMC Double Skin Facade',
+      capType:  'Facade Retrofit Proposal',
+      capLoc:   'Tehran, Iran — 2022',
+      icon: icons[8]
+    }
+  ];
 
   const grid = document.getElementById('grid');
   const panelTitle = document.getElementById('panelTitle');
@@ -331,11 +441,19 @@
     cell.className = 'cell';
     cell.innerHTML = `
       <div class="drape"></div>
-      <div class="icon">${p.icon}</div>
+      <div class="icon">
+        <div class="icon-svg-wrap">${p.icon}</div>
+        <div class="icon-caption">
+          <p class="cap-title">${p.capTitle}</p>
+          <p class="cap-sub">${p.capType}</p>
+          <p class="cap-sub">${p.capLoc}</p>
+        </div>
+      </div>
     `;
     cell.addEventListener('mouseenter', () => {
       panelTitle.textContent = p.title;
       panelDesc.textContent  = p.desc;
+      cell.classList.add('revealed'); // permanent — never removed on mouseleave
     });
     cell.addEventListener('mouseleave', () => {
       panelTitle.textContent = DEFAULT_TITLE;
