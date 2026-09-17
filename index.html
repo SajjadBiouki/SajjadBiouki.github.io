@@ -398,13 +398,13 @@
       capLoc:   'Zürich, Switzerland - 2024 / 2025',
       icon: icons[3]
     },
-    { // cell 5 — middle-middle
+    { // cell 5 — middle-middle — framed portrait photo instead of an icon
       title: 'Curriculum Vitae',
-      desc:  '...',
+      desc:  'Personal CV — created as of September 2026.',
       capTitle: 'Curriculum Vitae',
       capType:  'Created as of:',
       capLoc:   'Sep 2026',
-      icon: icons[4]
+      photo: 'Portrait.jpg' // pulled from your repo, next to this html file
     },
     { // cell 6 — middle-right
       title: 'Printtera, Semi-Autonomous Clay Habitat',
@@ -450,14 +450,17 @@
   const pagerTrack = document.getElementById('pagerTrack');
   const pageIndicator = document.getElementById('pageIndicator');
   const backBtn = document.getElementById('backBtn');
-
+ 
   projects.forEach((p, idx) => {
     const cell = document.createElement('div');
     cell.className = 'cell';
+    const iconContent = p.photo
+      ? `<div class="cell-photo-frame"><img src="${p.photo}" alt="${p.capTitle}"></div>`
+      : p.icon;
     cell.innerHTML = `
       <div class="drape"></div>
       <div class="icon">
-        <div class="icon-svg-wrap">${p.icon}</div>
+        <div class="icon-svg-wrap">${iconContent}</div>
         <div class="icon-caption">
           <p class="cap-title">${p.capTitle}</p>
           <p class="cap-sub">${p.capType}</p>
