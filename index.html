@@ -116,6 +116,14 @@
   }
   .cell.revealed .drape{ transform:scaleY(1); }
 
+  /* One-time opening animation on page load. It is deliberately separate
+     from .revealed so it never changes the permanent hover behavior. */
+  .cell.intro-revealed .drape{ transform:scaleY(1); }
+  .cell.intro-revealed .icon{
+    opacity:1;
+    transition-delay:0s;
+  }
+
   /* the icon + caption that fade in once the drape has covered the cell —
      stay revealed permanently afterward via the .revealed class (added on
      first hover, never removed) */
@@ -252,6 +260,43 @@
     text-align:left; /* description paragraphs go right-aligned */
   }
 
+  /* ---------- CONTACT BUTTONS ---------- */
+  .contact-links{
+    position:absolute;
+    opacity:0;
+    transition:opacity .35s ease;
+    left:10%;
+    top:75.0%;
+    width:3%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2.5%;
+    z-index:10;
+  }
+  .stage.contact-intro-visible .contact-links{ opacity:1; }
+
+  .contact-link{
+    width:100%;
+    aspect-ratio:1 / 1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    border-radius:50%;
+    background:transparent;
+    color:#000;
+    cursor:pointer;
+    transition:transform .15s ease;
+  }
+  .contact-link:hover{ transform:scale(1.12); }
+  .contact-link svg{
+    width:72%;
+    height:72%;
+    display:block;
+  }
+  .contact-link svg path{ fill:#000; }
+
   /* ---------- MAIN MENU / PROJECT VIEW SWITCHING ---------- */
   .screen{
     position:absolute;
@@ -321,6 +366,18 @@
 
     <div class="screen" id="mainMenu">
       <div class="grid" id="grid"></div>
+
+      <div class="contact-links" aria-label="Contact links">
+        <a class="contact-link" href="https://www.linkedin.com/in/sajjadbiouki" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <svg viewBox="-143 145 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M113,145c-141.4,0-256,114.6-256,256s114.6,256,256,256s256-114.6,256-256S254.4,145,113,145z M41.4,508.1H-8.5V348.4h49.9V508.1z M15.1,328.4h-0.4c-18.1,0-29.8-12.2-29.8-27.7c0-15.8,12.1-27.7,30.5-27.7c18.4,0,29.7,11.9,30.1,27.7C45.6,316.1,33.9,328.4,15.1,328.4z M241,508.1h-56.6v-82.6c0-21.6-8.8-36.4-28.3-36.4c-14.9,0-23.2,10-27,19.6c-1.4,3.4-1.2,8.2-1.2,13.1v86.3H71.8c0,0,0.7-146.4,0-159.7h56.1v25.1c3.3-11,21.2-26.6,49.8-26.6c35.5,0,63.3,23,63.3,72.4V508.1z"/></svg>
+        </a>
+        <a class="contact-link" href="mailto:mohammadsajjad.amrallahi@mail.polimi.it" aria-label="Email">
+          <svg viewBox="0 0 216 216" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M108,0C48.353,0,0,48.353,0,108s48.353,108,108,108s108-48.353,108-108S167.647,0,108,0z M156.657,60L107.96,98.498L57.679,60H156.657z M161.667,156h-109V76.259l50.244,38.11c1.347,1.03,3.34,1.545,4.947,1.545c1.645,0,3.073-0.54,4.435-1.616l49.374-39.276V156z"/></svg>
+        </a>
+        <a class="contact-link" href="tel:+393770922559" aria-label="Phone">
+          <svg viewBox="-1 0 19 19" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M16.5 9.5a8 8 0 1 1-8-8 8 8 0 0 1 8 8zm-6.479-1.112 3.596-2.077-.127-.22a1.85 1.85 0 0 0-2.07-.784 12.23 12.23 0 0 0-4.47 1.591 12.247 12.247 0 0 0-3.595 3.056 1.857 1.857 0 0 0-.381 2.211l.127.22 3.596-2.076-.127-.221a1.62 1.62 0 0 0-.573-.58A12.477 12.477 0 0 1 9.679 7.38a1.616 1.616 0 0 0 .215.787zm-2.749 2.916-.175-.303-3.595 2.077.175.304a.462.462 0 0 0 .629.168l2.798-1.616a.462.462 0 0 0 .168-.63zm6.92-3.997-.175-.303-3.595 2.077.175.303a.462.462 0 0 0 .63.168l2.797-1.616a.462.462 0 0 0 .168-.63z"/></svg>
+        </a>
+      </div>
 
       <div class="panel" id="panel">
         <h1 id="panelTitle">Selected Projects</h1>
@@ -495,6 +552,10 @@
   const pagerTrack = document.getElementById('pagerTrack');
   const pageIndicator = document.getElementById('pageIndicator');
   const backBtn = document.getElementById('backBtn');
+
+  // Keep references to the cells so the one-time intro can animate all of them together.
+  const cells = [];
+  let introRunning = true;
  
   projects.forEach((p, idx) => {
     const cell = document.createElement('div');
@@ -514,6 +575,7 @@
       </div>
     `;
     cell.addEventListener('mouseenter', () => {
+      if (introRunning) return;
       panelTitle.textContent = p.title;
       panelDesc.textContent  = p.desc;
       cell.classList.add('revealed'); // permanent — never removed on mouseleave
@@ -527,6 +589,27 @@
     cell.style.cursor = 'pointer';
     cell.addEventListener('click', () => openProject(idx));
     grid.appendChild(cell);
+    cells.push(cell);
+  });
+
+  // ---------- ONE-TIME INTRO REVEAL ----------
+  // The drapes rise, everything is visible for exactly 1 second, then the
+  // drapes fall again. No .revealed classes are added, so normal hover behavior
+  // starts from a completely clean state afterward.
+  const INTRO_VISIBLE_MS = 1000;
+  const INTRO_SETTLE_MS = 100;
+
+  requestAnimationFrame(() => {
+    // Contact icons appear during the intro and remain visible afterward.
+    stage.classList.add('contact-intro-visible');
+    cells.forEach(cell => cell.classList.add('intro-revealed'));
+
+    setTimeout(() => {
+      cells.forEach(cell => cell.classList.remove('intro-revealed'));
+      setTimeout(() => {
+        introRunning = false;
+      }, INTRO_SETTLE_MS);
+    }, INTRO_VISIBLE_MS);
   });
 
   // ---------- PROJECT VIEW / PAGER ----------
@@ -625,4 +708,3 @@
 </script>
 </body>
 </html>
-
