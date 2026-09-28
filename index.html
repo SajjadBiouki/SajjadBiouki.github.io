@@ -265,7 +265,7 @@
     position:absolute;
     opacity:0;
     transition:opacity .35s ease;
-    left:10%;
+    left:9%;
     top:75.0%;
     width:3%;
     display:flex;
@@ -296,6 +296,115 @@
     display:block;
   }
   .contact-link svg path{ fill:#000; }
+
+
+  /* ---------- PHONE / PORTRAIT LAYOUT ---------- */
+  @media (max-width: 700px) and (orientation: portrait){
+    html, body{
+      width:100%;
+      height:100%;
+      overflow:hidden;
+    }
+
+    body{
+      display:block;
+    }
+
+    /* On phones the stage becomes the full portrait viewport.
+       The 3x3 grid itself is NOT changed: it remains 3x3 and keeps
+       Website.png stretched over exactly the same grid area. */
+    .stage{
+      width:100vw;
+      height:100vh;
+    }
+
+    .grid{
+      left:8.2%;
+      top:2.9%;
+      width:75.2%;
+      height:72.7%;
+      grid-template-columns:repeat(3,1fr);
+      grid-template-rows:repeat(3,1fr);
+      background-size:100% 100%;
+    }
+
+    /* The panel moves from the right side to the bottom.
+       Title occupies the left part; description occupies the right part.
+       No border/background is added. */
+    .panel{
+      left:8.2%;
+      top:75.9%;
+      width:75.2%;
+      height:14.8%;
+      padding:0;
+      display:grid;
+      grid-template-columns:24% 76%;
+      grid-template-rows:1fr;
+      column-gap:0;
+      align-items:center;
+      justify-content:stretch;
+    }
+
+    .panel h1{
+      grid-column:1;
+      grid-row:1;
+      margin:0;
+      padding:0 7% 0 0;
+      font-size:16px;
+      line-height:1.08;
+      text-align:left;
+      overflow:hidden;
+      overflow-wrap:anywhere;
+      word-break:normal;
+    }
+
+    .panel p{
+      grid-column:2;
+      grid-row:1;
+      width:100%;
+      height:100%;
+      margin:0;
+      padding:0 0 0 3%;
+      color:#555;
+      font-size:14px;
+      line-height:1.18;
+      text-align:left;
+      overflow:hidden;
+      overflow-wrap:anywhere;
+      word-break:normal;
+      display:block;
+    }
+
+    /* Contact buttons sit beside the bottom panel, as in the phone sketch. */
+    .contact-links{
+      left:84.3%;
+      top:76.8%;
+      width:4.5%;
+      height:13.2%;
+      gap:0;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .contact-link{
+      width:100%;
+      flex:0 0 auto;
+    }
+
+    .contact-link svg{
+      width:100%;
+      height:100%;
+    }
+
+    /* Keep the project captions inside their original 3x3 cells; the
+       desktop tile behavior is otherwise unchanged. */
+    .icon-caption .cap-title{
+      font-size:clamp(5px, 1.65vw, 10px);
+    }
+    .icon-caption .cap-sub{
+      font-size:clamp(4px, 1.25vw, 8px);
+    }
+  }
 
   /* ---------- MAIN MENU / PROJECT VIEW SWITCHING ---------- */
   .screen{
@@ -578,11 +687,13 @@
       if (introRunning) return;
       panelTitle.textContent = p.title;
       panelDesc.textContent  = p.desc;
+      scheduleMobilePanelFit();
       cell.classList.add('revealed'); // permanent — never removed on mouseleave
     });
     cell.addEventListener('mouseleave', () => {
       panelTitle.textContent = DEFAULT_TITLE;
       panelDesc.textContent  = DEFAULT_DESC;
+      scheduleMobilePanelFit();
     });
     // every cell is clickable — whether it actually has pages is only
     // known once we've probed for its Project_{n}_Page_{p}.jpg files
@@ -611,6 +722,49 @@
       }, INTRO_SETTLE_MS);
     }, INTRO_VISIBLE_MS);
   });
+
+  // ---------- RESPONSIVE MOBILE PANEL FITTING ----------
+  // On portrait phones the bottom panel has a fixed amount of space.
+  // Shrink the title and description independently until their complete
+  // contents fit without scrolling or clipping.
+  function fitMobilePanelText(){
+    if (!window.matchMedia('(max-width: 700px) and (orientation: portrait)').matches) return;
+
+    const fit = (el, startPx, minPx, stepPx) => {
+      el.style.fontSize = `${startPx}px`;
+      let guard = 100;
+      while (guard-- > 0 && el.scrollHeight > el.clientHeight + 1) {
+        const current = parseFloat(getComputedStyle(el).fontSize);
+        if (current <= minPx) break;
+        el.style.fontSize = `${Math.max(minPx, current - stepPx)}px`;
+      }
+
+      // Titles can also overflow horizontally if a short title contains a
+      // long unbreakable word, so reduce it until both dimensions fit.
+      guard = 100;
+      while (guard-- > 0 && (el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1)) {
+        const current = parseFloat(getComputedStyle(el).fontSize);
+        if (current <= minPx) break;
+        el.style.fontSize = `${Math.max(minPx, current - stepPx)}px`;
+      }
+    };
+
+    fit(panelTitle, 16, 7, 0.25);
+    fit(panelDesc, 14, 5.5, 0.2);
+  }
+
+  let mobileFitFrame = null;
+  function scheduleMobilePanelFit(){
+    if (mobileFitFrame) cancelAnimationFrame(mobileFitFrame);
+    mobileFitFrame = requestAnimationFrame(() => {
+      mobileFitFrame = null;
+      fitMobilePanelText();
+    });
+  }
+
+  window.addEventListener('resize', scheduleMobilePanelFit);
+  window.addEventListener('orientationchange', () => setTimeout(scheduleMobilePanelFit, 50));
+  scheduleMobilePanelFit();
 
   // ---------- PROJECT VIEW / PAGER ----------
   let currentProject = null;
