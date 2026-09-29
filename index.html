@@ -265,13 +265,13 @@
     position:absolute;
     opacity:0;
     transition:opacity .35s ease;
-    left:9%;
-    top:75.0%;
-    width:3%;
+    left:7.5%;
+    top:76.0%;
+    width:3.2%;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:2.5%;
+    gap:1.55%;
     z-index:10;
   }
   .stage.contact-intro-visible .contact-links{ opacity:1; }
@@ -319,23 +319,28 @@
     }
 
     .grid{
-      left:8.2%;
+      left:5%;
       top:2.9%;
-      width:75.2%;
-      height:72.7%;
+      width:90%;
+      height:auto;
+      aspect-ratio:1 / 1;
       grid-template-columns:repeat(3,1fr);
       grid-template-rows:repeat(3,1fr);
       background-size:100% 100%;
     }
 
-    /* The panel moves from the right side to the bottom.
-       Title occupies the left part; description occupies the right part.
-       No border/background is added. */
+    /* The grid is deliberately kept square on phones. The previous
+       percentage height made the 3x3 artwork stretch on taller screens,
+       turning circles into ovals and squares into rectangles.
+
+       The panel then occupies the remaining space underneath the square
+       grid instead of having a fixed height. */
     .panel{
-      left:8.2%;
-      top:75.9%;
-      width:75.2%;
-      height:14.8%;
+      left:5%;
+      top:calc(2.9vh + 90vw + 2vh);
+      width:90%;
+      bottom:5vh;
+      height:auto;
       padding:0;
       display:grid;
       grid-template-columns:24% 76%;
@@ -364,7 +369,7 @@
       width:100%;
       height:100%;
       margin:0;
-      padding:0 0 0 3%;
+      padding:0 7% 0 3%;
       color:#555;
       font-size:14px;
       line-height:1.18;
@@ -377,10 +382,11 @@
 
     /* Contact buttons sit beside the bottom panel, as in the phone sketch. */
     .contact-links{
-      left:84.3%;
-      top:76.8%;
+      left:93%;
+      top:calc(2.9vh + 90vw + 2vh);
+      bottom:5vh;
       width:4.5%;
-      height:13.2%;
+      height:auto;
       gap:0;
       justify-content:space-between;
       align-items:center;
@@ -619,7 +625,7 @@
     },
     { // cell 6 — middle-right
       title: 'Printtera, Semi-Autonomous Clay Habitat',
-      desc:  'PrintTerra is a robotic 3D-printing system for a semi-autonomous earthen village, developed as a computational design and digital fabrication studio project. A moving Cartesian gantry draws construction material directly from the site soil and prints modules cell by cell, with human involvement limited to roughly 30% of the total build process — mainly site preparation, utility installation, and finishing work. \n\nRather than following standard flat-layer slicing, the toolpath departs from convention with a continuous, sine-based waving path built into the geometry from the first generative step, intended to reinforce structural stability during printing rather than applied as a surface effect afterward. The method relaxes a surface grid, pairs points across adjacent curves to close them into a continuous, non-porous loop, and sorts the resulting panel geometry through a set of logical gates. \n\nThe dome-like building form is climate-derived rather than stylistic, generated through a parametric search across radius, pad count, and pad depth, evaluated against adaptive thermal comfort. The selected geometry was then validated against daylighting (LEED sDA/ASE), glare (DGP), and settlement-scale solar radiation — improving daylight autonomy to 97.4% while eliminating disturbing glare and reducing incident radiation at the site’s excavated zones from 2,500 to 1,500 kWh/m². Fabrication logic, structural intent, and climate performance are treated as one interdependent design problem rather than separate stages.',
+      desc:  'PrintTerra is a robotic 3D-printing system for a semi-autonomous earthen village, developed as a computational design and digital fabrication studio project. A moving Cartesian gantry prints modules cell by cell, with limited human involvement — mainly site preparation, utility installation, and finishing work. \n\nRather than following standard flat-layer slicing, the toolpath departs from convention with a continuous, sine-based waving path built into the geometry from the first generative step, intended to reinforce structural stability during printing rather than applied as a surface effect afterward. \n\nThe dome-like building form is climate-derived rather than stylistic, generated through a parametric search across radius, pad count, and pad depth, evaluated against adaptive thermal comfort. The selected geometry was then validated against daylighting (LEED sDA/ASE), glare (DGP), and settlement-scale solar radiation — improving daylight autonomy to 97.4% while eliminating disturbing glare and reducing incident radiation at the site’s excavated zones from 2,500 to 1,500 kWh/m². Fabrication logic, structural intent, and climate performance are treated as one interdependent design problem rather than separate stages.',
       capTitle: 'Printtera, Clay Habitat',
       capType:  'Computor Aided Digital Fabrication Project',
       capLoc:   'Tehran, Iran - 2022 / 2023',
@@ -728,29 +734,40 @@
   // Shrink the title and description independently until their complete
   // contents fit without scrolling or clipping.
   function fitMobilePanelText(){
-    if (!window.matchMedia('(max-width: 700px) and (orientation: portrait)').matches) return;
+    if (!window.matchMedia('(max-width: 700px) and (orientation: portrait)').matches) {
+      // Remove the mobile-only inline sizes so desktop uses its original CSS typography.
+      panelTitle.style.fontSize = '';
+      panelDesc.style.fontSize = '';
+      return;
+    }
 
-    const fit = (el, startPx, minPx, stepPx) => {
-      el.style.fontSize = `${startPx}px`;
-      let guard = 100;
-      while (guard-- > 0 && el.scrollHeight > el.clientHeight + 1) {
-        const current = parseFloat(getComputedStyle(el).fontSize);
-        if (current <= minPx) break;
-        el.style.fontSize = `${Math.max(minPx, current - stepPx)}px`;
+    // Use the largest readable size that fits the available space.
+    // This means a tall phone gets larger typography instead of leaving
+    // a large unused area, while shorter phones automatically shrink it.
+    const fit = (el, maxPx, minPx) => {
+      el.style.fontSize = `${maxPx}px`;
+
+      // First find the largest size that fits both dimensions.
+      let low = minPx;
+      let high = maxPx;
+
+      for (let i = 0; i < 14; i++) {
+        const mid = (low + high) / 2;
+        el.style.fontSize = `${mid}px`;
+
+        const fits =
+          el.scrollHeight <= el.clientHeight + 1 &&
+          el.scrollWidth <= el.clientWidth + 1;
+
+        if (fits) low = mid;
+        else high = mid;
       }
 
-      // Titles can also overflow horizontally if a short title contains a
-      // long unbreakable word, so reduce it until both dimensions fit.
-      guard = 100;
-      while (guard-- > 0 && (el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1)) {
-        const current = parseFloat(getComputedStyle(el).fontSize);
-        if (current <= minPx) break;
-        el.style.fontSize = `${Math.max(minPx, current - stepPx)}px`;
-      }
+      el.style.fontSize = `${Math.max(minPx, low)}px`;
     };
 
-    fit(panelTitle, 16, 7, 0.25);
-    fit(panelDesc, 14, 5.5, 0.2);
+    fit(panelTitle, 32, 7);
+    fit(panelDesc, 28, 5.5);
   }
 
   let mobileFitFrame = null;
@@ -862,3 +879,4 @@
 </script>
 </body>
 </html>
+
